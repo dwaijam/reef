@@ -33,7 +33,6 @@ under the License.
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <Import Project="$(SolutionDir)\build.props" />
   <Import Project="$(SolutionDir)\xunit.targets" />

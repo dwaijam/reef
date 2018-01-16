@@ -62,6 +62,7 @@ under the License.
     <Compile Include="NetworkTransport.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Message\README.md" />
     <None Include="Org.Apache.REEF.Bridge.CLR.nuspec" />
     <None Include="packages.config" />

@@ -27,7 +27,6 @@ under the License.
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..</SolutionDir>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <Import Project="$(SolutionDir)\build.props" />
   <PropertyGroup>

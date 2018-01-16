@@ -27,7 +27,6 @@ under the License.
     <FileAlignment>512</FileAlignment>
     <RestorePackages>true</RestorePackages>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..</SolutionDir>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />

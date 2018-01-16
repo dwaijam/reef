@@ -27,7 +27,6 @@ under the License.
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <Import Project="$(SolutionDir)\build.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

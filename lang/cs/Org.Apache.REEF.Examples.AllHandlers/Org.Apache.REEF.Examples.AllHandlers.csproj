@@ -26,7 +26,6 @@ under the License.
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..</SolutionDir>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
