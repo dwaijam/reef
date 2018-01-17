@@ -97,9 +97,6 @@ under the License.
     <Compile Include="FileSystem\AzureBlob\ICloudBlobClient.cs" />
     <Compile Include="FileSystem\AzureBlob\AzureCloudBlobContainer.cs" />
     <Compile Include="FileSystem\AzureBlob\Parameters\AzureStorageConnectionString.cs" />
-    <Compile Include="FileSystem\AzureDatLake\AzureDataLakeFileSystem.cs" />
-    <Compile Include="FileSystem\AzureDatLake\AzureDataLakeFileSystemConfiguration.cs" />
-    <Compile Include="FileSystem\AzureDatLake\AzureDataLakeFileSystemConfigurationProvider.cs" />
     <Compile Include="FileSystem\FileStatus.cs" />
     <Compile Include="FileSystem\Hadoop\CommandResult.cs" />
     <Compile Include="FileSystem\Hadoop\HDFSConfigurationWithoutDriverBinding.cs" />
