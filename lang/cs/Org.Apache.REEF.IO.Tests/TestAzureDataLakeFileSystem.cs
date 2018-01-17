@@ -28,7 +28,7 @@ namespace Org.Apache.REEF.IO.Tests
 
         private sealed class TestContext
         {
-            public readonly MockAdlsClient mockAdlsClient = MockAdlsClient.GetMockClient();
+            public readonly AdlsClient mockAdlsClient = MockAdlsClient.GetMockClient();
 
             public IFileSystem GetAdlsFileSystem()
             {
