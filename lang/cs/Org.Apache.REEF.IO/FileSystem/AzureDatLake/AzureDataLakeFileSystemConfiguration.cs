@@ -11,8 +11,8 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDatLake
     public sealed class AzureDataLakeFileSystemConfiguration : ConfigurationModuleBuilder
     {
         /// <summary>
-        /// Set AzureDataLakeFileSystemProvider to DriverConfigurationProviders.
-        /// Set all the parameters needed for injecting AzureBlockBlobFileSystemProvider.
+        /// Set AzureDataLakeFileSystemConfigurationProvider to DriverConfigurationProviders.
+        /// Set all the parameters needed for injecting AzureDataLakeFileSystemConfigurationProvider.
         /// </summary>
         public static readonly ConfigurationModule ConfigurationModule = new AzureDataLakeFileSystemConfiguration()
             .BindSetEntry<DriverConfigurationProviders, AzureDataLakeFileSystemConfigurationProvider, IConfigurationProvider>(
