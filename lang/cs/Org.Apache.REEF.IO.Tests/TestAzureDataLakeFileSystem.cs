@@ -24,6 +24,7 @@ namespace Org.Apache.REEF.IO.Tests
             var testContext = new TestContext();
 
             Assert.False(testContext.GetAdlsFileSystem().Exists(FakeUri));
+            testContext.mockAdlsClient.CreateFile(FakeUri);
         }
 
         private sealed class TestContext
@@ -33,8 +34,6 @@ namespace Org.Apache.REEF.IO.Tests
             public IFileSystem GetAdlsFileSystem()
             {
                 var conf = AzureDataLakeFileSystemConfiguration.ConfigurationModule.Build();
-                    
-                // .Set(AzureDataLakeFileSystemConfiguration.ConnectionString, "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;")
                 var injector = TangFactory.GetTang().NewInjector(conf);
                 injector.BindVolatileInstance(mockAdlsClient);
                 var fs = injector.GetInstance<AzureDataLakeFileSystem>();
