@@ -19,12 +19,19 @@ namespace Org.Apache.REEF.IO.Tests
         private readonly static Uri FakeUri = new Uri("http://fake.com");
 
         [Fact]
+        public void TestDoesNotExists()
+        {
+            var testContext = new TestContext();
+            Assert.False(testContext.GetAdlsFileSystem().Exists(FakeUri));
+        }
+
+        [Fact]
         public void TestExists()
         {
             var testContext = new TestContext();
 
-            Assert.False(testContext.GetAdlsFileSystem().Exists(FakeUri));
-            testContext.mockAdlsClient.CreateFile(FakeUri);
+            testContext.mockAdlsClient.CreateFile(FakeUri.ToString(), IfExists.Overwrite);
+            Assert.True(testContext.GetAdlsFileSystem().Exists(FakeUri));
         }
 
         private sealed class TestContext
