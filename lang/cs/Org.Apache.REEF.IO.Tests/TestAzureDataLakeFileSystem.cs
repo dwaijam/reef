@@ -19,7 +19,7 @@ namespace Org.Apache.REEF.IO.Tests
         private readonly static Uri FakeUri = new Uri("http://fake.com");
 
         [Fact]
-        public void TestDoesNotExists()
+        public void TestDoesNotExist()
         {
             var testContext = new TestContext();
             Assert.False(testContext.GetAdlsFileSystem().Exists(FakeUri));
