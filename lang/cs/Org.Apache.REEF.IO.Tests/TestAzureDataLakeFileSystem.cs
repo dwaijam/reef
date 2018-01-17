@@ -29,7 +29,6 @@ namespace Org.Apache.REEF.IO.Tests
         public void TestExists()
         {
             var testContext = new TestContext();
-
             testContext.mockAdlsClient.CreateFile(FakeUri.ToString(), IfExists.Overwrite);
             Assert.True(testContext.GetAdlsFileSystem().Exists(FakeUri));
         }
