@@ -1,7 +1,5 @@
-﻿using Org.Apache.REEF.Common.Client.Parameters;
+using Org.Apache.REEF.Common.Client.Parameters;
 using Org.Apache.REEF.IO.FileSystem.AzureDataLake;
-using Org.Apache.REEF.IO.FileSystem.AzureBlob.Parameters;
-using Org.Apache.REEF.IO.FileSystem.AzureBlob.RetryPolicy;
 using Org.Apache.REEF.Tang.Formats;
 using Org.Apache.REEF.Tang.Interface;
 using Org.Apache.REEF.Tang.Util;
