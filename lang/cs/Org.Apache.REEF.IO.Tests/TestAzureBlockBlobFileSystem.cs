@@ -45,9 +45,12 @@ namespace Org.Apache.REEF.IO.Tests
         }
 
         [Fact]
-        public void TestOpenNotSupported()
+        public void TestOpen()
         {
-            Assert.Throws<NotSupportedException>(() => new TestContext().GetAzureFileSystem().Open(FakeUri));
+            var testContext = new TestContext();
+            var stream = testContext.GetAzureFileSystem().Open(new Uri(FakeUri, "container/file"));
+            testContext.TestCloudBlockBlob.Received(1).Open();
+            Assert.Equal(testContext.TestStream, stream);
         }
 
         [Fact]
@@ -133,6 +136,7 @@ namespace Org.Apache.REEF.IO.Tests
             public readonly ICloudBlockBlob TestCloudBlockBlob = Substitute.For<ICloudBlockBlob>();
             public readonly ICloudBlobContainer TestCloudBlobContainer = Substitute.For<ICloudBlobContainer>();
             public readonly ICloudBlobDirectory TestCloudBlobDirectory = Substitute.For<ICloudBlobDirectory>();
+            public readonly Stream TestStream = Substitute.For<Stream>();
 
             public IFileSystem GetAzureFileSystem()
             {
@@ -144,8 +148,10 @@ namespace Org.Apache.REEF.IO.Tests
                 injector.BindVolatileInstance(TestCloudBlobClient);
                 var fs = injector.GetInstance<AzureBlockBlobFileSystem>();
                 TestCloudBlobClient.BaseUri.ReturnsForAnyArgs(FakeUri);
+                TestCloudBlockBlob.Open().Returns(TestStream);
                 TestCloudBlobClient.GetBlockBlobReference(FakeUri).ReturnsForAnyArgs(TestCloudBlockBlob);
                 TestCloudBlobClient.GetContainerReference("container").ReturnsForAnyArgs(TestCloudBlobContainer);
+
                 TestCloudBlobContainer.GetDirectoryReference("directory").ReturnsForAnyArgs(TestCloudBlobDirectory);
                 TestCloudBlobDirectory.GetDirectoryReference("directory").ReturnsForAnyArgs(TestCloudBlobDirectory);
                 return fs;
