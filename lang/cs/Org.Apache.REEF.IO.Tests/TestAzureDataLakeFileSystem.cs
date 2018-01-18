@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Microsoft.Azure.DataLake.Store;
 using Microsoft.Azure.DataLake.Store.MockAdlsFileSystem;
-using Org.Apache.REEF.IO.FileSystem;
 using Org.Apache.REEF.IO.FileSystem.AzureDataLake;
 using Org.Apache.REEF.IO.FileSystem.AzureDatLake;
 using Org.Apache.REEF.Tang.Implementations.Tang;
