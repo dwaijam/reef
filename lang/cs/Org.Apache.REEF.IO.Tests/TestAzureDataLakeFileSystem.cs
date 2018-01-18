@@ -131,6 +131,7 @@ namespace Org.Apache.REEF.IO.Tests
         public void TestGetFileStatusThrowsException()
         {
             Assert.Throws<ArgumentException>(() => fs.GetFileStatus(null));
+
         }
 
         private sealed class TestContext
@@ -138,6 +139,7 @@ namespace Org.Apache.REEF.IO.Tests
             public readonly AdlsClient mockAdlsClient = MockAdlsClient.GetMockClient();
 
             public AzureDataLakeFileSystem GetAdlsFileSystem()
+
             {
                 var conf = AzureDataLakeFileSystemConfiguration.ConfigurationModule.Build();
                 var injector = TangFactory.GetTang().NewInjector(conf);
