@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace Org.Apache.REEF.IO.Tests
     {
         private readonly static Uri FakeBaseUri = new Uri("http://fakeadls.com");
         private readonly static Uri FakeFileUri = new Uri("http://fakeadls.com/dir/fakefile");
-        private readonly static Uri FakeDirUri = new Uri("http://fakeadls.com/fakedir/");
+        private readonly static Uri FakeDirUri = new Uri("http://fakeadls.com/dir/");
         private readonly TestContext context;
         private readonly AzureDataLakeFileSystem fs;
 
@@ -42,8 +43,16 @@ namespace Org.Apache.REEF.IO.Tests
             var directoryEntry = context.mockAdlsClient.GetDirectoryEntry(FakeDirUri.ToString());
             Assert.Equal(DirectoryEntryType.FILE, directoryEntry.Type);
         }
-        
-        //// TO TEST: if file is under a directory, create directory => check that directory is created
+
+        [Fact]
+        public void TestCreateFileUnderDirectory()
+        {
+            // Checks when file is created, directory in path was properly created too
+            fs.Create(FakeFileUri);
+            Assert.True(context.mockAdlsClient.CheckExists(FakeDirUri.ToString()));
+            var directoryEntry = context.mockAdlsClient.GetDirectoryEntry(FakeDirUri.ToString());
+            Assert.Equal(DirectoryEntryType.DIRECTORY, directoryEntry.Type);
+        }
 
         [Fact]
         public void TestDelete()
@@ -53,7 +62,12 @@ namespace Org.Apache.REEF.IO.Tests
             Assert.False(context.mockAdlsClient.CheckExists(FakeFileUri.ToString()));
         }
         
-        //// TO TEST: trying to delete something that doesn't exists => throw exception (IOException)
+        [Fact]
+        public void TestDeleteException()
+        {
+            // Delete a file that doesn't exist.
+            Assert.Throws<IOException>(() => fs.Delete(FakeFileUri));
+        }
 
         [Fact]
         public void TestFileDoesNotExists()
@@ -71,19 +85,28 @@ namespace Org.Apache.REEF.IO.Tests
         [Fact]
         public void TestCopy()
         {
-            Assert.True(false, "Test not implemented.");
-        }
+            // Setup
+            Uri src = new Uri("http://fakeadls.src.com/dir/fakefile");
+            context.mockAdlsClient.CreateFile(src.ToString(), IfExists.Fail);
+            Assert.True(context.mockAdlsClient.CheckExists(src.ToString()));
+            Assert.False(context.mockAdlsClient.CheckExists(FakeFileUri.ToString()));
 
-        [Fact]
-        public void TestCopyToLocal()
-        {
-            Assert.True(false, "Test not implemented.");
+            fs.Copy(src, FakeBaseUri);
+            Assert.True(context.mockAdlsClient.CheckExists(FakeFileUri.ToString()));
         }
 
         [Fact]
         public void TestCopyFromLocal()
         {
-            Assert.True(false, "Test not implemented.");
+            fs.CopyFromLocal("dir/fakefile", FakeBaseUri);
+            Assert.True(context.mockAdlsClient.CheckExists(FakeFileUri.ToString()));
+        }
+
+        [Fact]
+        public void TestCopyToLocal()
+        {
+            context.mockAdlsClient.CreateFile(FakeFileUri.ToString(), IfExists.Overwrite);
+            Assert.True(File.Exists("dir/fakefile"));
         }
 
         [Fact]
@@ -105,20 +128,28 @@ namespace Org.Apache.REEF.IO.Tests
             fs.Delete(FakeDirUri);
             Assert.False(context.mockAdlsClient.CheckExists(FakeDirUri.ToString()), "Test to delete adls directory failed.");
         }
-        
-        //// TO TEST: delete directory that doesn't exist => io exception
+
+        [Fact]
+        public void TestDeleteDirectoryException()
+        {
+            // Delete a directory that doesn't exist.
+            Assert.Throws<IOException>(() => fs.DeleteDirectory(FakeDirUri));
+        }
 
         [Fact]
         public void TestGetChildren()
         {
-            context.mockAdlsClient.CreateFile(FakeFileUri.ToString(), IfExists.Overwrite);
+            context.mockAdlsClient.CreateDirectory(FakeDirUri.ToString());
             var children = fs.GetChildren(FakeDirUri);
             int count = children.Count();
+            Assert.Equal(0, count);
+
+            context.mockAdlsClient.CreateFile(FakeFileUri.ToString(), IfExists.Overwrite);
+            children = fs.GetChildren(FakeDirUri);
+            count = children.Count();
             Assert.Equal(1, count);
         }
         
-        //// TO TEST: 0 children, file does not exist.
-
         [Fact]
         public void TestCreateUriForPath()
         {
