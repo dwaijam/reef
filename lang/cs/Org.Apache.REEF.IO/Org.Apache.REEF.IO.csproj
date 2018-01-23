@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -41,6 +41,9 @@ under the License.
       <HintPath>$(PackagesDir)\Microsoft.Azure.KeyVault.Core.1.0.0\lib\net40\Microsoft.Azure.KeyVault.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Azure.Management.DataLake.Store, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(PackagesDir)\Microsoft.Azure.Management.DataLake.Store.2.2.1\lib\net452\Microsoft.Azure.Management.DataLake.Store.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Data.Edm, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(PackagesDir)\Microsoft.Data.Edm.5.6.4\lib\net40\Microsoft.Data.Edm.dll</HintPath>
       <Private>True</Private>
@@ -57,9 +60,21 @@ under the License.
       <HintPath>$(PackagesDir)\Microsoft.Rest.ClientRuntime.2.3.10\lib\net452\Microsoft.Rest.ClientRuntime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Rest.ClientRuntime.Azure, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(PackagesDir)\Microsoft.Rest.ClientRuntime.Azure.3.3.7\lib\net452\Microsoft.Rest.ClientRuntime.Azure.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.WindowsAzure.Storage, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(PackagesDir)\WindowsAzure.Storage.6.1.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.28.3.860, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(PackagesDir)\Microsoft.IdentityModel.Clients.ActiveDirectory.2.28.3\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms, Version=2.28.3.860, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(PackagesDir)\Microsoft.IdentityModel.Clients.ActiveDirectory.2.28.3\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(PackagesDir)\Microsoft.Rest.ClientRuntime.Azure.Authentication.2.3.1\lib\net452\Microsoft.Rest.ClientRuntime.Azure.Authentication.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(PackagesDir)\Newtonsoft.Json.$(NewtonsoftJsonVersion)\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -100,9 +115,18 @@ under the License.
     <Compile Include="FileSystem\AzureBlob\ICloudBlobClient.cs" />
     <Compile Include="FileSystem\AzureBlob\AzureCloudBlobContainer.cs" />
     <Compile Include="FileSystem\AzureBlob\Parameters\AzureStorageConnectionString.cs" />
-    <Compile Include="FileSystem\AzureDatLake\AzureDataLakeFileSystem.cs" />
-    <Compile Include="FileSystem\AzureDatLake\AzureDataLakeFileSystemConfiguration.cs" />
-    <Compile Include="FileSystem\AzureDatLake\AzureDataLakeFileSystemConfigurationProvider.cs" />
+    <Compile Include="FileSystem\AzureDataLake\IDataLakeStoreClient.cs" />
+    <Compile Include="FileSystem\AzureDataLake\AzureDataLakeStoreClient.cs" />
+    <Compile Include="FileSystem\AzureDataLake\AzureDataLakeFileSystem.cs" />
+    <Compile Include="FileSystem\AzureDataLake\AzureDataLakeFileSystemConfiguration.cs" />
+    <Compile Include="FileSystem\AzureDataLake\AzureDataLakeFileSystemConfigurationProvider.cs" />
+    <Compile Include="FileSystem\AzureDataLake\IAdlsCredentials.cs" />
+    <Compile Include="FileSystem\AzureDataLake\SecretKeyAdlsCredentials.cs" />
+    <Compile Include="FileSystem\AzureDataLake\Parameters\DataLakeStorageAccountName.cs" />
+    <Compile Include="FileSystem\AzureDataLake\Parameters\Tenant.cs" />
+    <Compile Include="FileSystem\AzureDataLake\Parameters\TokenAudience.cs" />
+    <Compile Include="FileSystem\AzureDataLake\Parameters\ClientId.cs" />
+    <Compile Include="FileSystem\AzureDataLake\Parameters\SecretKey.cs" />
     <Compile Include="FileSystem\FileStatus.cs" />
     <Compile Include="FileSystem\Hadoop\CommandResult.cs" />
     <Compile Include="FileSystem\Hadoop\HDFSConfigurationWithoutDriverBinding.cs" />
