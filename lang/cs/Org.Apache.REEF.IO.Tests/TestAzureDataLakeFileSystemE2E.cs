@@ -27,6 +27,7 @@ using Microsoft.Azure.DataLake.Store;
 using Org.Apache.REEF.Tang.Interface;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Org.Apache.REEF.IO.Tests
 {
@@ -40,7 +41,7 @@ namespace Org.Apache.REEF.IO.Tests
         private const string ContentsText = "hello";
         private IFileSystem _fileSystem;
         private AdlsClient _adlsClient;
-        private string defaultFolderName;
+        private string _defaultFolderName;
 
         public TestAzureDataLakeFileSystemE2E()
         {
@@ -53,7 +54,7 @@ namespace Org.Apache.REEF.IO.Tests
             const string clientId = "#############################";
             const string secretKey = "##########";
 
-            defaultFolderName = "reef-test-folder-" + Guid.NewGuid();
+            _defaultFolderName = "reef-test-folder-" + Guid.NewGuid();
 
             IConfiguration conf = AzureDataLakeFileSystemConfiguration.ConfigurationModule
                 .Set(AzureDataLakeFileSystemConfiguration.DataLakeStorageAccountName, adlsAccountName)
@@ -72,7 +73,7 @@ namespace Org.Apache.REEF.IO.Tests
         {
             if (_adlsClient != null)
             {
-                _adlsClient.DeleteRecursive($"/{defaultFolderName}");
+                _adlsClient.DeleteRecursive($"/{_defaultFolderName}");
             }
         }
 
@@ -89,7 +90,7 @@ namespace Org.Apache.REEF.IO.Tests
         [Fact(Skip = SkipMessage)]
         public void TestCreateE2E()
         {
-            string fileName = $"/{defaultFolderName}/TestCreateE2E.txt";
+            string fileName = $"/{_defaultFolderName}/TestCreateE2E.txt";
             var stream = _fileSystem.Create(PathToFile(fileName));
             Assert.True(_adlsClient.CheckExists(fileName));
             Assert.Equal(typeof(AdlsOutputStream), stream.GetType());
@@ -105,6 +106,13 @@ namespace Org.Apache.REEF.IO.Tests
         }
 
         [Fact(Skip = SkipMessage)]
+        public void TestDeleteExceptionE2E()
+        {
+            Exception ex = Assert.Throws<AdlsException>(() => _fileSystem.Delete(PathToFile("fileName")));
+            Assert.Equal(typeof(IOException), ex.GetType().BaseType);
+        }
+
+        [Fact(Skip = SkipMessage)]
         public void TestExistsE2E()
         {
             string fileName = UploadFromString(ContentsText);
@@ -116,7 +124,24 @@ namespace Org.Apache.REEF.IO.Tests
         [Fact(Skip = SkipMessage)]
         public void TestCopyE2E()
         {
-            throw new NotImplementedException();
+            var sourceTempFilePath = Path.GetTempFileName();
+            var destTempFilePath = Path.GetTempFileName();
+            try
+            {
+                string fileName = UploadFromString("CopyThis", 1);
+                var sourceUri = PathToFile(fileName);
+                string copyToFile = $"/{_defaultFolderName}/testFile2.txt";
+                var destUri = PathToFile(copyToFile);
+                _fileSystem.Copy(sourceUri, destUri);
+                _adlsClient.BulkDownload(sourceUri.AbsolutePath, sourceTempFilePath);
+                _adlsClient.BulkDownload(destUri.AbsolutePath, destTempFilePath);
+                FileSystemTestUtilities.HaveSameContent(sourceTempFilePath, destTempFilePath);
+            }
+            finally
+            {
+                File.Delete(sourceTempFilePath);
+                File.Delete(destTempFilePath);
+            }
         }
 
         [Fact(Skip = SkipMessage)]
@@ -144,12 +169,11 @@ namespace Org.Apache.REEF.IO.Tests
             try
             {
                 File.WriteAllText(tempFilePath, ContentsText);
-                Uri remoteFileUri = PathToFile($"/{defaultFolderName}/{tempFileName}");
+                Uri remoteFileUri = PathToFile($"/{_defaultFolderName}/{tempFileName}");
                 _fileSystem.CopyFromLocal(tempFilePath, remoteFileUri);
-                Assert.True(_adlsClient.CheckExists($"/{defaultFolderName}/{tempFileName}"));
+                Assert.True(_adlsClient.CheckExists($"/{_defaultFolderName}/{tempFileName}"));
                 var stream = _fileSystem.Open(remoteFileUri);
-                StreamReader reader = new StreamReader(stream);
-                string streamText = reader.ReadToEnd();
+                string streamText = new StreamReader(stream).ReadToEnd();
                 Assert.Equal(ContentsText, streamText);
             }
             finally
@@ -161,7 +185,7 @@ namespace Org.Apache.REEF.IO.Tests
         [Fact(Skip = SkipMessage)]
         public void TestCreateDirectoryE2E()
         {
-            string dirName = $"/{defaultFolderName}";
+            string dirName = $"/{_defaultFolderName}";
             _fileSystem.CreateDirectory(PathToFile(dirName));
             Assert.True(_adlsClient.CheckExists(dirName));
         }
@@ -169,7 +193,7 @@ namespace Org.Apache.REEF.IO.Tests
         [Fact(Skip = SkipMessage)]
         public void TestDeleteDirectoryE2E()
         {
-            string dirName = $"/{defaultFolderName}";
+            string dirName = $"/{_defaultFolderName}";
             _adlsClient.CreateDirectory(dirName);
             Assert.True(_adlsClient.CheckExists(dirName));
             _fileSystem.Delete(PathToFile(dirName));
@@ -181,10 +205,11 @@ namespace Org.Apache.REEF.IO.Tests
         {
             string fileName1 = UploadFromString("file1", 1);
             string fileName2 = UploadFromString("file2", 2);
-            string dirName = $"/{defaultFolderName}";
+            string dirName = $"/{_defaultFolderName}";
             var childUris = _fileSystem.GetChildren(PathToFile(dirName)).ToList();
             Assert.True(childUris.Count() == 2);
-            Assert.Equal(fileName2,  childUris.First().AbsolutePath.Equals(fileName1) ? childUris.Last().AbsolutePath : childUris.First().AbsolutePath);
+            List<Uri> fileUris = new List<Uri> { PathToFile(fileName1), PathToFile(fileName2) };
+            Assert.Equal(fileUris, childUris);
         }
 
         [Fact(Skip = SkipMessage)]
@@ -213,7 +238,7 @@ namespace Org.Apache.REEF.IO.Tests
 
         private string UploadFromString(string str, int fileIndex = 1)
         {
-            string fileName = $"/{defaultFolderName}/testFile{fileIndex}.txt";
+            string fileName = $"/{_defaultFolderName}/testFile{fileIndex}.txt";
             using (var streamWriter = new StreamWriter(_adlsClient.CreateFile(fileName, IfExists.Overwrite)))
             {
                 streamWriter.Write(str);

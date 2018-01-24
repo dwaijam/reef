@@ -30,11 +30,13 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
     internal sealed class AzureDataLakeFileSystem : IFileSystem
     {
         IDataLakeStoreClient _client;
+        private readonly AdlsClient _adlsClient;
 
         [Inject]
         private AzureDataLakeFileSystem(IDataLakeStoreClient client)
         {
             _client = client;
+            _adlsClient = _client.GetReference();
         }
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
         /// <exception cref="AdlsException">If the URI couldn't be opened.</exception>
         public Stream Open(Uri fileUri)
         {
-            return _client.GetReference().GetReadStream(fileUri.AbsolutePath);
+            return _adlsClient.GetReadStream(fileUri.AbsolutePath);
         }
 
         /// <summary>
@@ -52,7 +54,7 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
         /// <exception cref="AdlsException">If the URI couldn't be created.</exception>
         public Stream Create(Uri fileUri)
         {
-            return _client.GetReference().CreateFile(fileUri.AbsolutePath, IfExists.Overwrite);
+            return _adlsClient.CreateFile(fileUri.AbsolutePath, IfExists.Overwrite);
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
         /// <exception cref="AdlsException">If the specified file cannot be deleted</exception>
         public void Delete(Uri fileUri)
         {
-            bool deleteStatus = _client.GetReference().Delete(fileUri.AbsolutePath);
+            bool deleteStatus = _adlsClient.Delete(fileUri.AbsolutePath);
             if (!deleteStatus)
             {
                 throw new AdlsException($"Cannot delete directory/file specified by {fileUri.ToString()}");
@@ -73,16 +75,33 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
         /// </summary>
         public bool Exists(Uri fileUri)
         {
-            return _client.GetReference().CheckExists(fileUri.AbsolutePath);
+            return _adlsClient.CheckExists(fileUri.AbsolutePath);
         }
 
         /// <summary>
         /// Copies the file referenced by sourceUri to destinationUri.
+        /// Note : This method reads from the input stream of sourceUri locally and
+        /// writes to the output stream of destinationUri.
+        /// This is time consuming and not recommended for large file transfers.
         /// </summary>
         /// <exception cref="AdlsException">If copy process encounters any exceptions</exception>
         public void Copy(Uri sourceUri, Uri destinationUri)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var readStream = Open(sourceUri))
+                {
+                    readStream.Position = 0;
+                    using (var writeStream = Create(destinationUri))
+                    {
+                        readStream.CopyTo(writeStream);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new AdlsException(e.Message);
+            }
         }
 
         /// <summary>
@@ -91,7 +110,7 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
         /// <exception cref="AdlsException">If copy process encounters any exceptions</exception>
         public void CopyToLocal(Uri remoteFileUri, string localName)
         {
-            TransferStatus status = _client.GetReference().BulkDownload(remoteFileUri.AbsolutePath, localName);
+            TransferStatus status = _adlsClient.BulkDownload(remoteFileUri.AbsolutePath, localName);
             if (status.EntriesFailed.Count != 0)
             {
                 throw new AdlsException($"{status.EntriesFailed.Count} entries did not get transferred correctly");
@@ -104,7 +123,7 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
         /// <exception cref="AdlsException">If copy process encounters any exception</exception>
         public void CopyFromLocal(string localFileName, Uri remoteFileUri)
         {
-            TransferStatus status = _client.GetReference().BulkUpload(localFileName, remoteFileUri.AbsolutePath);
+            TransferStatus status = _adlsClient.BulkUpload(localFileName, remoteFileUri.AbsolutePath);
             if (status.EntriesFailed.Count != 0)
             {
                 throw new AdlsException($"{status.EntriesFailed.Count} entries did not get transferred correctly");
@@ -117,7 +136,7 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
         /// <exception cref="AdlsException">If directory cannot be created</exception>
         public void CreateDirectory(Uri directoryUri)
         {
-            bool createDirStatus = _client.GetReference().CreateDirectory(directoryUri.AbsolutePath);
+            bool createDirStatus = _adlsClient.CreateDirectory(directoryUri.AbsolutePath);
             if (!createDirStatus)
             {
                 throw new AdlsException($"Cannot create directory specified by {directoryUri.ToString()}");
@@ -131,8 +150,8 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
         public void DeleteDirectory(Uri directoryUri)
         {
             bool deleteStatus = Exists(directoryUri) && 
-                _client.GetReference().GetDirectoryEntry(directoryUri.AbsolutePath).Type == DirectoryEntryType.DIRECTORY && 
-                _client.GetReference().DeleteRecursive(directoryUri.AbsolutePath);
+                _adlsClient.GetDirectoryEntry(directoryUri.AbsolutePath).Type == DirectoryEntryType.DIRECTORY &&
+                _adlsClient.DeleteRecursive(directoryUri.AbsolutePath);
             if (!deleteStatus)
             {
                 throw new AdlsException($"Cannot delete directory specified by {directoryUri.ToString()}");
@@ -145,9 +164,9 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
         /// <exception cref="AdlsException">If directory does not exist</exception>
         public IEnumerable<Uri> GetChildren(Uri directoryUri)
         {
-            if (Exists(directoryUri) && _client.GetReference().GetDirectoryEntry(directoryUri.AbsolutePath).Type == DirectoryEntryType.DIRECTORY)
+            if (Exists(directoryUri) && _adlsClient.GetDirectoryEntry(directoryUri.AbsolutePath).Type == DirectoryEntryType.DIRECTORY)
             {
-                foreach (var entry in _client.GetReference().EnumerateDirectory(directoryUri.AbsolutePath))
+                foreach (var entry in _adlsClient.EnumerateDirectory(directoryUri.AbsolutePath))
                 {
                     yield return new Uri($"{GetUriPrefix()}{entry.FullName}");
                 }
@@ -184,7 +203,7 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
             {
                 throw new ArgumentNullException("Specified uri is null");
             }
-            var entrySummary = _client.GetReference().GetDirectoryEntry(remoteFileUri.AbsolutePath);
+            var entrySummary = _adlsClient.GetDirectoryEntry(remoteFileUri.AbsolutePath);
             if (!entrySummary.LastModifiedTime.HasValue)
             {
                 throw new AdlsException("File/Directory at " + remoteFileUri + " does not have a last modified" +
