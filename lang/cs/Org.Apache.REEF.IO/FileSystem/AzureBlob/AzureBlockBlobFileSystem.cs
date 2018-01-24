@@ -111,6 +111,12 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureBlob
             _client.GetBlockBlobReference(remoteFileUri).UploadFromFile(localFileName, FileMode.Open);
         }
 
+        public void UploadFromStream(Stream stream, Uri remoteFileUri)
+        {
+            _client.GetBlockBlobReference(remoteFileUri).UploadFromStream(stream);
+        }
+
+
         /// <summary>
         /// Azure blobs does not have the sense of the existence of a "directory."
         /// We will not throw an error, but we will not do anything either.
