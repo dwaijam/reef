@@ -137,6 +137,11 @@ namespace Org.Apache.REEF.IO.FileSystem.Hadoop
             _commandRunner.Run("dfs -put " + localFileName + " " + remoteFileUri);
         }
 
+        public void UploadFromStream(Stream stream, Uri remoteFileUri)
+        {
+            throw new NotSupportedException();
+        }
+
         public void CreateDirectory(Uri directoryUri)
         {
             _commandRunner.Run("dfs -mkdir " + directoryUri);

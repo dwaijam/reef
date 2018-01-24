@@ -100,6 +100,11 @@ namespace Org.Apache.REEF.IO.FileSystem.Local
             File.Copy(localFileName, remoteFileUri.LocalPath);
         }
 
+        public void UploadFromStream(Stream stream, Uri remoteFileUri)
+        {
+            throw new NotSupportedException();
+        }
+
         public void CreateDirectory(Uri directoryUri)
         {
             Directory.CreateDirectory(directoryUri.LocalPath);

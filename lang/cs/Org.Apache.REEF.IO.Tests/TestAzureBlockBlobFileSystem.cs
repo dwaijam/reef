@@ -86,6 +86,15 @@ namespace Org.Apache.REEF.IO.Tests
         }
 
         [Fact]
+        public void TestUploadFromStream()
+        {
+            var testContext = new TestContext();
+            var stream = new MemoryStream();
+            testContext.GetAzureFileSystem().UploadFromStream(stream, FakeUri);
+            testContext.TestCloudBlockBlob.Received(1).UploadFromStream(stream);
+        }
+
+        [Fact]
         public void TestCreateDirectory()
         {
             var testContext = new TestContext();

@@ -209,7 +209,6 @@ namespace Org.Apache.REEF.IO.Tests
             Assert.Equal(DownloadText(blob), text);
         }
 
-
         [Fact(Skip = SkipMessage)]
         public void TestDeleteDirectoryAtContainerE2E()
         {
