@@ -84,6 +84,14 @@ namespace Org.Apache.REEF.IO.FileSystem
         void CopyFromLocal(string localFileName, Uri remoteFileUri);
 
         /// <summary>
+        /// Uploads the stream to the remote location.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="remoteFileUri"></param>
+        /// <exception cref="IOException"></exception>
+        void UploadFromStream(Stream stream, Uri remoteFileUri);
+
+        /// <summary>
         /// Creates a new directory.
         /// </summary>
         /// <param name="directoryUri"></param>

@@ -102,6 +102,11 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureBlob
             #endif
         }
 
+        public void UploadFromStream(Stream stream)
+        {
+            _blob.UploadFromStream(stream);
+        }
+
         public void FetchAttributes()
         {
             _blob.FetchAttributesAsync().Wait();

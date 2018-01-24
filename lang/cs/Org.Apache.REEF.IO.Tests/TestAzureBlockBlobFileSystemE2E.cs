@@ -196,6 +196,20 @@ namespace Org.Apache.REEF.IO.Tests
         }
 
         [Fact(Skip = SkipMessage)]
+        public void TestUploadFromStreamE2E()
+        {
+            string text = "hello";
+            byte[] byteArray = Encoding.UTF8.GetBytes(text);
+            var stream = new MemoryStream(byteArray);
+            var blob = _container.GetBlockBlobReference(HelloFile);
+            var helloFilePath = PathToFile(HelloFile);
+
+            _fileSystem.UploadFromStream(stream, helloFilePath);
+            Assert.True(CheckBlobExists(blob));
+            Assert.Equal(DownloadText(blob), text);
+        }
+
+        [Fact(Skip = SkipMessage)]
         public void TestDeleteDirectoryAtContainerE2E()
         {
             _fileSystem.DeleteDirectory(_container.Uri);

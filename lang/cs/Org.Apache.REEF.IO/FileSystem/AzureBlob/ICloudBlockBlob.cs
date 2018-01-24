@@ -91,6 +91,12 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureBlob
         void UploadFromFile(string path, FileMode mode);
 
         /// <summary>
+        /// Uploads to an <see cref="ICloudBlockBlob"/> from a stream.
+        /// </summary>
+        /// <param name="stream">Stream to upload</param>
+        void UploadFromStream(Stream stream);
+
+        /// <summary>
         /// Makes a round trip to the server to fetch the metadata of the <see cref="ICloudBlockBlob"/>.
         /// </summary>
         void FetchAttributes();
