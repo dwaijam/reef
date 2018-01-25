@@ -92,11 +92,11 @@ namespace Org.Apache.REEF.IO.Tests
         [Fact(Skip = SkipMessage)]
         public void TestOpenE2E()
         {
-            string text = "hello";
+            const string text = "hello";
             var blob = _container.GetBlockBlobReference(HelloFile);
             UploadFromString(blob, text);
             Assert.True(CheckBlobExists(blob));
-            var stream = _fileSystem.Open(PathToFile(HelloFile));
+            Stream stream = _fileSystem.Open(PathToFile(HelloFile));
             StreamReader reader = new StreamReader(stream);
             string streamText = reader.ReadToEnd();
             Assert.Equal(text, streamText);
@@ -105,10 +105,10 @@ namespace Org.Apache.REEF.IO.Tests
         [Fact(Skip = SkipMessage)]
         public void TestCreateE2E()
         {
-            string text = "Hello Azure Blob";
+            const string text = "Hello Azure Blob";
             var blob = _container.GetBlockBlobReference(HelloFile);
             Assert.False(CheckBlobExists(blob));
-            var stream = _fileSystem.Create(PathToFile(HelloFile));
+            Stream stream = _fileSystem.Create(PathToFile(HelloFile));
             using (var streamWriter = new StreamWriter(stream))
             {
                 streamWriter.Write(text);

@@ -42,7 +42,7 @@ namespace Org.Apache.REEF.IO.Tests
         public void TestCreate()
         {
             var testContext = new TestContext();
-            var stream = testContext.GetAzureFileSystem().Create(new Uri(FakeUri, "container/file"));
+            Stream stream = testContext.GetAzureFileSystem().Create(new Uri(FakeUri, "container/file"));
             testContext.TestCloudBlockBlob.Received(1).Create();
             Assert.Equal(testContext.TestCreateStream, stream);
         }
@@ -51,7 +51,7 @@ namespace Org.Apache.REEF.IO.Tests
         public void TestOpen()
         {
             var testContext = new TestContext();
-            var stream = testContext.GetAzureFileSystem().Open(new Uri(FakeUri, "container/file"));
+            Stream stream = testContext.GetAzureFileSystem().Open(new Uri(FakeUri, "container/file"));
             testContext.TestCloudBlockBlob.Received(1).Open();
             Assert.Equal(testContext.TestOpenStream, stream);
         }
