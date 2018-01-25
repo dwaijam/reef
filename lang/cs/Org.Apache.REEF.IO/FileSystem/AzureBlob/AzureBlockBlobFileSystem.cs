@@ -46,8 +46,7 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureBlob
         /// </summary>
         public Stream Open(Uri fileUri)
         {
-            var blob = _client.GetBlockBlobReference(fileUri);
-            return blob.Open();
+            return _client.GetBlockBlobReference(fileUri).Open();
         }
 
         /// <summary>
@@ -55,8 +54,7 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureBlob
         /// </summary>
         public Stream Create(Uri fileUri)
         {
-            var blob = _client.GetBlockBlobReference(fileUri);
-            return blob.Create();
+            return _client.GetBlockBlobReference(fileUri).Create();
         }
 
         /// <summary>
