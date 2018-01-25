@@ -53,6 +53,13 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureBlob
         Stream Open();
 
         /// <summary>
+        /// Creates a blob and returns a write Stream object to it.
+        /// </summary>
+        /// <returns>System.IO.Stream object.</returns>
+        /// <exception cref="StorageException">If blob cannot be created</exception>
+        Stream Create();
+
+        /// <summary>
         /// Makes a round trip to the server to test if the blob exists.
         /// </summary>
         /// <returns>True if exists. False otherwise.</returns>
