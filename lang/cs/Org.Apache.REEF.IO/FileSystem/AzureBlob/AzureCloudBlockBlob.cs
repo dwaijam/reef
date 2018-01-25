@@ -64,6 +64,11 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureBlob
             return _blob.OpenRead();
         }
 
+        public Stream Create()
+        {
+            return _blob.OpenWrite();
+        }
+
         public bool Exists()
         {
             var task = _blob.ExistsAsync();

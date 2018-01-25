@@ -46,16 +46,15 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureBlob
         /// </summary>
         public Stream Open(Uri fileUri)
         {
-            var blob = _client.GetBlockBlobReference(fileUri);
-            return blob.Open();
+            return _client.GetBlockBlobReference(fileUri).Open();
         }
 
         /// <summary>
-        /// Not supported for Azure Blobs, will throw <see cref="NotSupportedException"/>.
+        /// Creates a blob for the specified fileUri and returns a write Stream object to it.
         /// </summary>
         public Stream Create(Uri fileUri)
         {
-            throw new NotSupportedException("Create is not supported for AzureBlockBlobFileSystem.");
+            return _client.GetBlockBlobReference(fileUri).Create();
         }
 
         /// <summary>
