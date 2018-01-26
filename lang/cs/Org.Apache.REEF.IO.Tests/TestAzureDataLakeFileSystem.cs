@@ -32,6 +32,14 @@ namespace Org.Apache.REEF.IO.Tests
         }
 
         [Fact]
+        public void TestOpenException()
+        {
+            // Open a file that doesn't exist.
+            Exception ex = Assert.Throws<AdlsException>(() => fs.Open(FakeFileUri));
+            Assert.Equal(typeof(IOException), ex.GetType().BaseType);
+        }
+
+        [Fact]
         public void TestCreate()
         {
             fs.Create(FakeFileUri);
@@ -93,6 +101,15 @@ namespace Org.Apache.REEF.IO.Tests
         }
 
         [Fact]
+        public void TestCopyException()
+        {
+            // Source file does not exist
+            Uri src = new Uri($"{FakeDirUri}/copyfile");
+            Exception ex = Assert.Throws<AdlsException>(() => fs.Copy(src, FakeFileUri));
+            Assert.Equal(typeof(IOException), ex.GetType().BaseType);
+        }
+
+        [Fact]
         public void TestCopyFromLocal()
         {
             Assert.False(context.MockAdlsClient.CheckExists(FakeFileUri.AbsolutePath));
@@ -106,6 +123,14 @@ namespace Org.Apache.REEF.IO.Tests
             context.MockAdlsClient.CreateFile(FakeFileUri.AbsolutePath, IfExists.Overwrite);
             fs.CopyToLocal(FakeFileUri, Path.GetFileName(FakeFileUri.LocalPath));
             Assert.True(File.Exists(Path.GetFileName(FakeFileUri.LocalPath)));
+        }
+
+        [Fact]
+        public void TestCopyToLocalException()
+        {
+            // Source file does not exist
+            Exception ex = Assert.Throws<AdlsException>(() => fs.CopyToLocal(FakeFileUri, "fileName"));
+            Assert.Equal(typeof(IOException), ex.GetType().BaseType);
         }
 
         [Fact]
@@ -149,7 +174,15 @@ namespace Org.Apache.REEF.IO.Tests
             count = children.Count();
             Assert.Equal(1, count);
         }
-        
+
+        [Fact]
+        public void TestGetChildrenException()
+        {
+            // Search a directory that doesn't exist.
+            Exception ex = Assert.Throws<AdlsException>(() => fs.GetChildren(FakeFileUri).ToList());
+            Assert.Equal(typeof(IOException), ex.GetType().BaseType);
+        }
+
         [Fact]
         public void TestCreateUriForPath()
         {

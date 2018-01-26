@@ -110,10 +110,17 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
         /// <exception cref="AdlsException">If copy process encounters any exceptions</exception>
         public void CopyToLocal(Uri remoteFileUri, string localName)
         {
-            TransferStatus status = _adlsClient.BulkDownload(remoteFileUri.AbsolutePath, localName);
-            if (status.EntriesFailed.Count != 0)
+            try
             {
-                throw new AdlsException($"{status.EntriesFailed.Count} entries did not get transferred correctly");
+                TransferStatus status = _adlsClient.BulkDownload(remoteFileUri.AbsolutePath, localName); // throws KeyNotFoundException
+                if (status.EntriesFailed.Count != 0)
+                {
+                    throw new Exception($"{status.EntriesFailed.Count} entries did not get transferred correctly");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new AdlsException(ex.Message);
             }
         }
 
@@ -123,10 +130,17 @@ namespace Org.Apache.REEF.IO.FileSystem.AzureDataLake
         /// <exception cref="AdlsException">If copy process encounters any exception</exception>
         public void CopyFromLocal(string localFileName, Uri remoteFileUri)
         {
-            TransferStatus status = _adlsClient.BulkUpload(localFileName, remoteFileUri.AbsolutePath);
-            if (status.EntriesFailed.Count != 0)
+            try
             {
-                throw new AdlsException($"{status.EntriesFailed.Count} entries did not get transferred correctly");
+                TransferStatus status = _adlsClient.BulkUpload(localFileName, remoteFileUri.AbsolutePath);
+                if (status.EntriesFailed.Count != 0)
+                {
+                    throw new AdlsException($"{status.EntriesFailed.Count} entries did not get transferred correctly");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new AdlsException(ex.Message);
             }
         }
 
