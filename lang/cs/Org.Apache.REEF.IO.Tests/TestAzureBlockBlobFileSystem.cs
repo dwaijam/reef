@@ -36,7 +36,7 @@ namespace Org.Apache.REEF.IO.Tests
     /// </summary>
     public sealed class TestAzureBlockBlobFileSystem
     {
-        private readonly static Uri FakeUri = new Uri("http://fake.com");
+        private static readonly Uri FakeUri = new Uri("http://fake.com");
 
         [Fact]
         public void TestCreate()
